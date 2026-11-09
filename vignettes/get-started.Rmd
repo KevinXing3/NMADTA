@@ -121,6 +121,11 @@ plot(kang_fit, type = "forest")
 
 ![NMADTA forest plots of study-level sensitivity and specificity for the two candidate tests.](../figures/example-forest.png)
 
+Points mark study-level posterior medians and horizontal intervals show 95%
+credible intervals. Vertical dotted lines mark the pooled posterior medians.
+Dashed horizontal intervals identify studies in which that candidate test was
+not observed; these estimates are model-based.
+
 Other available displays are `type = "density"` and `type = "contour"`.
 See [`plot.nmadt()`](../reference/plot.nmadt.html) for options.
 

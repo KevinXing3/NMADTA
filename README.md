@@ -54,19 +54,20 @@ plot(kang_fit, type = "sroc")
 
 <p class="figure-note">Actual NMADTA output from the worked example, using three chains and 50,000 iterations per chain. See the <a href="https://kevinxing3.github.io/NMADTA/articles/get-started.html">complete analysis</a> for data preparation, numerical output, diagnostics, and reproducibility details.</p>
 
-## Joint uncertainty in diagnostic accuracy
+## Study-level diagnostic accuracy
 
-The contour display shows the joint posterior distribution of the true-positive
-and false-positive rates. The two panels below are **Figure 5 from the companion
-RSM article**, showing D-dimer and ultrasonography.
+The forest plots show study-level sensitivity and specificity for D-dimer and
+ultrasonography, using the same fitted model as the SROC display above.
+Points mark posterior medians, horizontal intervals show 95% credible intervals,
+and vertical dotted lines mark the pooled posterior medians.
 
 ~~~r
-plot(kang_fit, type = "contour")
+plot(kang_fit, type = "forest")
 ~~~
 
-[![Figure 5 from the RSM article: posterior contour plots of true-positive versus false-positive rates for D-dimer and ultrasonography.](https://kevinxing3.github.io/NMADTA/figures/paper-figure-5.png)](https://kevinxing3.github.io/NMADTA/figures/paper-figure-5.png)
+[![Actual NMADTA forest plot output: study-level sensitivity and specificity for D-dimer and ultrasonography.](https://kevinxing3.github.io/NMADTA/figures/example-forest.png)](https://kevinxing3.github.io/NMADTA/figures/example-forest.png)
 
-<p class="figure-note">Figure 5 reproduced from <a href="https://doi.org/10.1017/rsm.2026.10097">Xing et al. (2026), Research Synthesis Methods</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Cropped to the figure. This published illustration used NMADTA 0.1.3. Click the figure to view it at full resolution.</p>
+<p class="figure-note">Actual output from NMADTA 0.1.4 using the 12-study worked example. Dashed horizontal intervals identify studies in which that candidate test was not observed; these estimates are model-based. See the <a href="https://kevinxing3.github.io/NMADTA/articles/get-started.html#assess-convergence-and-assumptions">convergence assessment</a> for this run. Click the figure to view it at full resolution.</p>
 
 ## Two model families, one workflow
 
