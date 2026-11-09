@@ -7,6 +7,5 @@ bibentry(
              person("Haitao", "Chu")),
   year = "2026", journal = "Research Synthesis Methods",
   doi = "10.1017/rsm.2026.10097",
-  url = "https://doi.org/10.1017/rsm.2026.10097",
   header = "To cite NMADTA in publications, please use:"
 )
