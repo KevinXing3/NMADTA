@@ -1,0 +1,79 @@
+name: Publish package website
+on:
+  workflow_dispatch:
+    inputs:
+      rebuild:
+        description: Rebuild documentation with R before publishing
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+    paths: ["docs/**"]
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Import the prepared project on first publication
+        if: hashFiles('NMADTA-website.zip') != ''
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('NMADTA-website.zip') as archive:
+              for entry in archive.infolist():
+                  parts = Path(entry.filename).parts
+                  if not parts or parts[0] != 'NMADTA-website' or '..' in parts:
+                      raise ValueError('Unexpected archive path')
+                  if len(parts) < 2 or parts[1] == '.github' or entry.is_dir():
+                      continue
+                  target = Path(*parts[1:])
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  target.write_bytes(archive.read(entry))
+          Path('NMADTA-website.zip').unlink()
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m 'Import NMADTA package source and complete website'
+          git push
+      - uses: r-lib/actions/setup-pandoc@v2
+        if: inputs.rebuild == true
+      - uses: r-lib/actions/setup-r@v2
+        if: inputs.rebuild == true
+      - name: Install JAGS
+        if: inputs.rebuild == true
+        run: sudo apt-get update && sudo apt-get install -y jags
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        if: inputs.rebuild == true
+        with:
+          extra-packages: any::pkgdown, any::rmarkdown, any::knitr, local::.
+          needs: website
+      - name: Rebuild and save documentation
+        if: inputs.rebuild == true
+        run: |
+          Rscript tools/build-site.R
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs _pkgdown.yml
+          if ! git diff --cached --quiet; then
+            git commit -m 'Rebuild package documentation'
+            git push
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
