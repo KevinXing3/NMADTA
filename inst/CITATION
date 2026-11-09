@@ -1,0 +1,12 @@
+bibentry(
+  bibtype = "Article",
+  title = "{NMADTA}: An {R} package for network meta-analysis of multiple diagnostic tests",
+  author = c(person("Xing", "Xing"), person("Boyang", "Lu"),
+             person("Lifeng", "Lin"), person("Qinshu", "Lian"),
+             person("James S.", "Hodges"), person("Yong", "Chen"),
+             person("Haitao", "Chu")),
+  year = "2026", journal = "Research Synthesis Methods",
+  doi = "10.1017/rsm.2026.10097",
+  url = "https://doi.org/10.1017/rsm.2026.10097",
+  header = "To cite NMADTA in publications, please use:"
+)

@@ -1,0 +1,36 @@
+Model: hierarchical 
+
+Sensitivity (Median and 95% CrI):
+                Median (95% CI)        
+D-dimer         0.8513 (0.6928, 0.9783)
+Ultrasonography 0.9310 (0.8265, 0.9924)
+
+Specificity (Median and 95% CrI):
+                Median (95% CI)        
+D-dimer         0.8721 (0.7191, 0.9878)
+Ultrasonography 0.7640 (0.4833, 0.9638)
+
+Prevalence:
+                Median (95% CI)        
+D-dimer         0.4353 (0.3664, 0.5107)
+Ultrasonography 0.4353 (0.3664, 0.5107)
+
+PPV:
+                Median (95% CI)        
+D-dimer         0.8368 (0.6665, 0.9836)
+Ultrasonography 0.7522 (0.5457, 0.9570)
+
+NPV:
+                Median (95% CI)        
+D-dimer         0.8833 (0.7701, 0.9823)
+Ultrasonography 0.9333 (0.8255, 0.9929)
+
+LR+:
+                Median (95% CI)         
+D-dimer         6.6029 (2.7916, 74.1034)
+Ultrasonography 3.9221 (1.7535, 26.3607)
+
+LR-:
+                Median (95% CI)        
+D-dimer         0.1719 (0.0231, 0.3791)
+Ultrasonography 0.0926 (0.0091, 0.2710)

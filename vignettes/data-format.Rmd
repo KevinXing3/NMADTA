@@ -1,0 +1,80 @@
+---
+title: "Preparing your data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Preparing your data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+NMADTA uses counts of joint binary test outcomes within each study.
+The input must be an R data frame with exactly `2 * K + 4` columns in a fixed
+order. `K` counts candidate tests and excludes the reference standard.
+
+## Required column order
+
+| Position | Contents | Coding |
+|:--|:--|:--|
+| 1 | Study identifier | Study IDs corresponding to `nstu` |
+| 2 to `K + 2` | Indicators `delta0` to `deltaK` | 1 = observed; 0 = missing |
+| `K + 3` to `2 * K + 3` | Joint outcomes `T0` to `TK` | 1 = positive; 0 = negative; 999 = missing test |
+| `2 * K + 4` | Cell count `n` | Number of participants with that outcome pattern |
+
+The implementation reads columns by **position**. Keep this order even if you
+choose different column names.
+
+## Example with two candidate tests
+
+For `K = 2`, the eight columns are:
+
+~~~r
+c("sid", "delta0", "delta1", "delta2", "T0", "T1", "T2", "n")
+data(dat.kang, package = "NMADTA")
+head(dat.kang)
+~~~
+
+~~~
+  sid delta0 delta1 delta2 T0 T1  T2  n
+1   1      1      1      0  1  1 999 16
+2   1      1      1      0  1  0 999  5
+3   1      1      1      0  0  1 999  4
+4   1      1      1      0  0  0 999 28
+5   2      1      1      0  1  1 999 32
+6   2      1      1      0  1  0 999  5
+~~~
+
+`T0` is venography, `T1` is D-dimer, and `T2` is ultrasonography.
+The first study observes `T0` and `T1` but not `T2` and contributes the four
+possible binary outcome patterns for the observed pair.
+`delta2 = 0` and `T2 = 999` encode an absent test, not a negative result.
+
+## Studies without the reference standard
+
+When the reference is absent, set `delta0 = 0` and `T0 = 999`.
+The other columns describe joint patterns among the observed candidate tests.
+The model handles latent disease status rather than requiring invented
+reference-test outcomes.
+
+A study with `m` observed binary tests can contribute up to `2^m` patterns.
+`n` contains the participant count for each pattern.
+
+## Check the coding
+
+Keep the candidate tests in the same order throughout the dataset and in
+`testname`. Verify indicators, outcomes, and counts against the extracted
+study data. The published implementation supports one to five candidate tests.
+
+~~~r
+K <- 2
+stopifnot(
+  is.data.frame(dat.kang),
+  ncol(dat.kang) == 2 * K + 4,
+  all(as.matrix(dat.kang[, 2:(K + 2)]) %in% c(0, 1)),
+  all(as.matrix(dat.kang[, (K + 3):(2 * K + 3)]) %in% c(0, 1, 999)),
+  all(dat.kang$n >= 0)
+)
+~~~
+
+These checks illustrate the coding requirements. They do not establish
+statistical identifiability or model suitability; see the
+[model guide](models.html) for sparse-network considerations.

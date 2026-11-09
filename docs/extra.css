@@ -1,0 +1,41 @@
+:root { --nm-navy: #122d42; --nm-teal: #087f80; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; line-height: 1.72; hyphens: none; }
+.navbar { border-bottom: 1px solid #dce7eb; box-shadow: none; padding: .85rem 0; }
+.navbar-brand { color: var(--nm-navy) !important; font-size: 1.35rem; font-weight: 750; letter-spacing: -.02em; }
+.navbar .nav-link { font-weight: 550; }
+main { padding-top: 1.15rem; }
+h1, h2, h3, h4 { color: var(--nm-navy); font-weight: 650; line-height: 1.25; }
+h1 { font-size: 2.65rem; letter-spacing: -.035em; }
+h2 { margin-top: 2.3rem; font-size: 1.6rem; letter-spacing: -.02em; }
+h3 { margin-top: 1.8rem; font-size: 1.25rem; }
+.page-header { margin-bottom: 1.15rem; border: 0; }
+.page-header .logo { width: 165px; height: auto; margin: 0 0 1.2rem 1.8rem; }
+.package-tagline { color: #486173; font-size: 1.42rem; line-height: 1.4; margin-bottom: 1.2rem; max-width: 34rem; font-weight: 420; }
+.home-actions { display: flex; flex-wrap: wrap; gap: .65rem; margin: 1.4rem 0 2rem; }
+.home-actions .btn { padding: .6rem 1.1rem; font-weight: 600; text-decoration: none; }
+pre { border: 1px solid #dfe8eb; background: #f6f9fa; border-radius: .35rem; padding: 1.1rem; }
+pre code { font-size: .88rem; }
+code { font-size: .89em; }
+table { width: 100%; margin: 1.2rem 0; font-size: .95rem; }
+table th { color: var(--nm-navy); background: #f3f8f8; }
+table th, table td { padding: .65rem .7rem; border-bottom: 1px solid #dde6e9; vertical-align: top; }
+table code { overflow-wrap: anywhere; }
+.figure-note { font-size: .88rem; color: #526575; margin-top: .5rem; }
+main img { max-width: 100%; height: auto; }
+aside { font-size: .9rem; }
+aside h2 { font-size: 1.1rem; margin-top: 1.7rem; }
+footer { border-top: 1px solid #dce7eb; margin-top: 3rem; padding-top: 1.5rem; color: #596d7c; font-size: .82rem; }
+a { text-underline-offset: .15em; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid #14a6a6; outline-offset: 3px; }
+@media (max-width: 767px) {
+  h1 { font-size: 2.1rem; }
+  .page-header .logo { width: 110px; margin-left: 1rem; }
+  .package-tagline { font-size: 1.18rem; }
+  .home-actions { margin: 1rem 0 1.4rem; }
+  main { padding-top: .65rem; }
+  table { display: block; overflow-x: auto; }
+  pre { padding: .8rem; }
+}
+
+.logo { width: 155px; height: auto; }
+@media(max-width: 767px) { .logo { width: 100px; margin-left: 1rem; margin-bottom: .5rem; } }

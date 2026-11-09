@@ -1,0 +1,8 @@
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
+^\.openai$
+^\.cache$
+^tools$
+^SITE_SETUP\.md$

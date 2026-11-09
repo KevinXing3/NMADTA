@@ -1,0 +1,77 @@
+---
+title: "Choosing a model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Choosing a model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+NMADTA implements two established Bayesian model families for networks of
+diagnostic tests. Both combine studies with different observed test sets,
+including studies with and without a reference standard.
+
+## Hierarchical model
+
+[`nmadt.hierarchical()`](../reference/nmadt.hierarchical.html) directly models
+accuracy parameters, including sensitivity and specificity, with between-study
+random effects. Pooled sensitivity and specificity are natural summary quantities.
+The model is described by Ma, Lian, Chu, Ibrahim, and Chen (2018),
+[Biostatistics](https://doi.org/10.1093/biostatistics/kxx025).
+
+~~~r
+library(NMADTA)
+data(dat.kang)
+
+fit <- nmadt.hierarchical(
+  nstu = 12, K = 2, data = dat.kang,
+  testname = c("D-dimer", "Ultrasonography")
+)
+~~~
+
+## HSROC model
+
+[`nmadt.hsroc()`](../reference/nmadt.hsroc.html) uses accuracy and threshold
+components. This parameterization is useful for considering differences
+in operating thresholds across studies and comparisons across the ROC space.
+The model is described by Lian, Hodges, and Chu (2019),
+[Journal of the American Statistical Association](https://doi.org/10.1080/01621459.2018.1476239).
+
+~~~r
+fit_hsroc <- nmadt.hsroc(
+  nstu = 12, K = 2, data = dat.kang,
+  testname = c("D-dimer", "Ultrasonography"),
+  n.adapt = 5000, n.iter = 50000, n.chains = 3
+)
+~~~
+
+## A common result interface
+
+Both families return an object of class `nmadt`:
+
+~~~r
+print(fit)
+summary(fit)
+plot(fit, type = "sroc")
+plot(fit, type = "forest")
+plot(fit, type = "density")
+plot(fit, type = "contour")
+~~~
+
+Summaries include posterior estimates and intervals for sensitivity,
+specificity, prevalence, predictive values, and likelihood ratios.
+Each model has its own prior parameters; consult the reference before
+changing defaults.
+
+## Missing data and priors
+
+Changing between hierarchical and HSROC formulations does not resolve
+uncertainty about why tests are missing. Regular functions use the MAR
+formulation; [MNAR functions](missing-data.html) support sensitivity analysis.
+
+Priors are specified on different scales in the two model families.
+Similar-looking default settings need not express equivalent prior
+information. For sparse networks or few reference-standard studies, examine
+identification, convergence, and prior sensitivity.
+The [software article](https://doi.org/10.1017/rsm.2026.10097) discusses
+these choices and the implementation's limits.

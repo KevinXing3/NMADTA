@@ -1,0 +1,159 @@
+---
+title: "Get started with NMADTA"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Get started with NMADTA}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This guide follows a complete hierarchical-model analysis of the included
+deep vein thrombosis data, from installation to posterior summaries and plots.
+The figures and numerical output below were generated with NMADTA 0.1.4.
+
+## Installation
+
+NMADTA needs **R 4.0.0 or later** and **JAGS 4.x**. JAGS is a separate program:
+install it from the [JAGS project](https://mcmc-jags.sourceforge.io/) first.
+
+~~~r
+install.packages("NMADTA")
+library(NMADTA)
+rjags::jags.version()
+packageVersion("NMADTA")
+~~~
+
+If `rjags` cannot load, check that JAGS is installed for your operating system
+and processor architecture, then restart R.
+
+## Inspect the study data
+
+The `dat.kang` dataset has 48 rows of joint outcome counts from 12 studies.
+The candidate tests are D-dimer and ultrasonography; venography is the reference.
+
+| Tests observed | Studies |
+|:--|--:|
+| D-dimer and venography | 4 |
+| Ultrasonography and venography | 3 |
+| D-dimer and ultrasonography | 5 |
+
+~~~r
+data(dat.kang)
+head(dat.kang)
+~~~
+
+~~~
+  sid delta0 delta1 delta2 T0 T1  T2  n
+1   1      1      1      0  1  1 999 16
+2   1      1      1      0  1  0 999  5
+3   1      1      1      0  0  1 999  4
+4   1      1      1      0  0  0 999 28
+5   2      1      1      0  1  1 999 32
+6   2      1      1      0  1  0 999  5
+~~~
+
+A missing test is indicated by `delta = 0` and the outcome code `999`.
+These rows record joint test outcomes, rather than a separate 2 by 2 table
+for every comparison. Read [Preparing your data](data-format.html) before
+using your own study data.
+
+## Fit the hierarchical model
+
+Here `nstu = 12` is the number of studies and `K = 2` counts the candidate
+tests, excluding the reference standard.
+
+~~~r
+set.seed(10)
+kang_fit <- nmadt.hierarchical(
+  nstu = 12, K = 2, data = dat.kang,
+  testname = c("D-dimer", "Ultrasonography"),
+  directory = tempdir(),
+  n.adapt = 5000, n.iter = 50000, n.chains = 3,
+  n.burnin = 25000, n.thin = 1,
+  conv.diag = TRUE, trace = NULL,
+  dic = FALSE, mcmc.samples = FALSE
+)
+~~~
+
+This run uses 5,000 adaptation iterations, followed by 50,000 iterations per
+chain, with the first 25,000 removed as burn-in. Three chains are used.
+Running time depends on the model, data, and computer.
+
+## Read the posterior summaries
+
+~~~r
+summary(kang_fit)
+~~~
+
+~~~
+Model: hierarchical 
+
+Sensitivity (Median and 95% CrI):
+                Median (95% CI)        
+D-dimer         0.8513 (0.6928, 0.9783)
+Ultrasonography 0.9310 (0.8265, 0.9924)
+
+Specificity (Median and 95% CrI):
+                Median (95% CI)        
+D-dimer         0.8721 (0.7191, 0.9878)
+Ultrasonography 0.7640 (0.4833, 0.9638)
+~~~
+
+These are the sensitivity and specificity summaries from this run.
+The full output also includes prevalence, predictive values, and likelihood
+ratios. Download the [complete summary](../example/summary.txt).
+Numerical results can vary across platforms and JAGS runs.
+
+## Visualize diagnostic accuracy
+
+~~~r
+plot(kang_fit, type = "sroc")
+~~~
+
+![NMADTA SROC output for the D-dimer and ultrasonography example.](../figures/example-sroc.png)
+
+The first two panels show the SROC display for each candidate test. The third
+compares the fitted curves and study-level estimates.
+
+~~~r
+plot(kang_fit, type = "forest")
+~~~
+
+![NMADTA forest plots of study-level sensitivity and specificity for the two candidate tests.](../figures/example-forest.png)
+
+Other available displays are `type = "density"` and `type = "contour"`.
+See [`plot.nmadt()`](../reference/plot.nmadt.html) for options.
+
+## Assess convergence and assumptions
+
+The fit requests potential scale reduction factors through `conv.diag = TRUE`.
+A writable `directory` is required for these diagnostics or trace files.
+To inspect trace plots, fit the model with a selected quantity such as
+`trace = "Se"` or `trace = "Sp"`.
+
+In this illustrative run, the largest PSRF point estimate was 1.27 for the
+positive likelihood ratio of ultrasonography. Extend the run and reassess
+diagnostics before substantive inference for that quantity.
+
+Check mixing, convergence, and sensitivity to prior choices before interpreting
+results. Longer chains may be needed. To retain the additional MCMC sample
+output, use `mcmc.samples = TRUE`.
+
+The regular function uses the MAR formulation. Use dedicated
+[MNAR functions](missing-data.html) to examine alternative missing-data
+assumptions.
+
+## Reproducibility
+
+`tools/reproduce-example.R` contains the full fitting and plotting code.
+Figures shown here are actual outputs of that script; the model is not run
+in the browser.
+
+- [Input data as CSV](../example/dat-kang.csv)
+- [Convergence diagnostics from this run](../example/convergence.txt)
+- [Full posterior summary](../example/summary.txt)
+- [Computing environment](../example/session-info.txt)
+- [Run settings](../example/README.txt)
+
+The [RSM article](https://doi.org/10.1017/rsm.2026.10097) used NMADTA 0.1.3.
+Its [replication repository](https://osf.io/46jvc/) provides the original materials.

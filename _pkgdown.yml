@@ -1,0 +1,74 @@
+url: https://kevinxing3.github.io/NMADTA/
+destination: docs
+development:
+  mode: release
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#087f80"
+    navbar-bg: "#ffffff"
+    navbar-light-color: "#19364a"
+    navbar-light-hover-color: "#087f80"
+    navbar-light-active-color: "#087f80"
+    body-color: "#253746"
+    body-bg: "#ffffff"
+    border-radius: "0.35rem"
+    font-size-base: "1rem"
+    code-color: "#087777"
+    link-color: "#087f80"
+navbar:
+  bg: light
+  type: light
+  structure:
+    left: [intro, articles, reference, citation]
+    right: [search, cran]
+  components:
+    intro:
+      text: Get started
+      href: articles/get-started.html
+    articles:
+      text: Articles
+      menu:
+        - text: Preparing your data
+          href: articles/data-format.html
+        - text: Choosing a model
+          href: articles/models.html
+        - text: MNAR sensitivity analysis
+          href: articles/missing-data.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    citation:
+      text: Citation
+      href: authors.html#citation
+    cran:
+      text: CRAN
+      href: https://CRAN.R-project.org/package=NMADTA
+home:
+  title: Network meta-analysis of multiple diagnostic tests
+  description: Bayesian diagnostic-test network meta-analysis in R, with hierarchical and HSROC models, missing-data sensitivity analyses, and graphical summaries.
+  strip_header: false
+  links:
+    - text: Download the reference manual
+      href: https://cran.r-project.org/web/packages/NMADTA/NMADTA.pdf
+    - text: Read the software article
+      href: https://doi.org/10.1017/rsm.2026.10097
+    - text: Replication materials
+      href: https://osf.io/46jvc/
+    - text: Contact maintainer
+      href: mailto:xxing@arizona.edu
+reference:
+  - title: Fit diagnostic-test networks
+    desc: Hierarchical and HSROC models under the MAR formulation.
+    contents: [nmadt.hierarchical, nmadt.hsroc]
+  - title: Explore missing-data assumptions
+    desc: Dedicated functions for MNAR sensitivity analyses.
+    contents: [nmadt.hierarchical.MNAR, nmadt.hsroc.MNAR]
+  - title: Summarize and visualize
+    contents: [print.nmadt, summary.nmadt, plot.nmadt]
+  - title: Example data
+    contents: [dat.kang]
+articles:
+  - title: Learn NMADTA
+    navbar: ~
+    contents: [get-started, data-format, models, missing-data]

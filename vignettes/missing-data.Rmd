@@ -1,0 +1,77 @@
+---
+title: "MNAR sensitivity analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MNAR sensitivity analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Studies may omit tests for reasons associated with their accuracy.
+NMADTA provides missing-not-at-random (MNAR) functions to examine how results
+change under alternative missingness assumptions.
+
+## Available functions
+
+- [`nmadt.hierarchical.MNAR()`](../reference/nmadt.hierarchical.MNAR.html)
+  extends the hierarchical formulation.
+- [`nmadt.hsroc.MNAR()`](../reference/nmadt.hsroc.MNAR.html)
+  extends the HSROC formulation.
+
+The input uses the [same column structure](data-format.html) as the
+regular fitting functions.
+
+## Sensitivity parameters
+
+`gamma1` and `gamma0` are numeric vectors of length `K`. They describe the
+dependence of missingness on test sensitivity and specificity, respectively,
+on the model's logit scale.
+
+The reference recommends treating them as sensitivity-analysis parameters.
+Zero represents no dependence on the corresponding accuracy parameter;
+negative values can represent poorer-performing tests being more likely
+to be missing under this selection model.
+
+~~~r
+library(NMADTA)
+data(dat.kang)
+
+fit_mnar <- nmadt.hierarchical.MNAR(
+  nstu = 12, K = 2, data = dat.kang,
+  testname = c("D-dimer", "Ultrasonography"),
+  gamma1 = c(-0.5, -0.5),
+  gamma0 = c(-0.5, -0.5),
+  directory = tempdir(),
+  n.adapt = 5000, n.iter = 50000, n.chains = 3,
+  conv.diag = TRUE
+)
+summary(fit_mnar)
+~~~
+
+## Compare several assumptions
+
+Repeat the fit over a prespecified grid. Here each grid value is applied
+to both tests and to both accuracy coefficients:
+
+~~~r
+gamma_grid <- c(0, -0.5, -1, -2)
+fits <- lapply(gamma_grid, function(g) {
+  nmadt.hierarchical.MNAR(
+    nstu = 12, K = 2, data = dat.kang,
+    testname = c("D-dimer", "Ultrasonography"),
+    gamma1 = rep(g, 2), gamma0 = rep(g, 2),
+    directory = tempdir(),
+    n.adapt = 5000, n.iter = 50000, n.chains = 3,
+    conv.diag = TRUE
+  )
+})
+names(fits) <- paste0("gamma_", gamma_grid)
+lapply(fits, summary)
+~~~
+
+These values illustrate the workflow. Choose plausible assumptions for
+your review, document them, and check convergence for each fit.
+The observed data alone do not identify the missingness mechanism.
+
+See the [reference](../reference/nmadt.hierarchical.MNAR.html) for the complete
+arguments and the [article](https://doi.org/10.1017/rsm.2026.10097) for examples.
